@@ -1,0 +1,48 @@
+# Задаём имя проекта
+name: user-notes
+# Указывает версию формата файла (вроде как устарело уже)
+# version: '3.8'
+
+# Определяет службы, которые будут запущены в контейнерах
+services:
+  db:
+    # Берём образ БД PostgreSQL версии latest
+    image: postgres:latest
+    # Автоматически перезапускает контейнер, если он выходит из строя
+    restart: always
+    # Файл содержащий переменные окружения для контейнера
+    env_file:
+      - .env
+    # Используем значения переменных окружения из .env файла
+    environment:
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+      - POSTGRES_DB=${SQL_DATABASE}
+    # Примонтируем том my_data к директории /var/lib/postgresql/data контейнера db
+    volumes:
+      - my_data:/var/lib/postgresql/data
+    # Проверка состояния контейнера
+    healthcheck:
+      # Запускаем внутри контейнера проверку его состояния
+      test: pg_isready -h db -U ${SQL_USER} -d ${SQL_DATABASE}
+      # Интервал между проверками
+      interval: 3s
+      # Время на завершение проверки
+      timeout: 3s
+      # Количество неуспешных попыток проверки для "отказа"
+      retries: 3
+      # Ожидание перед началом проверок
+      start_period: 5s
+    # Порт, если нужно подключаться к базе данных с хоста (опционально)
+    ports:
+      - "5432:5432"
+    # Подключаем к сети horse
+    networks:
+      - horse
+
+volumes:
+  my_data:
+
+networks:
+  horse:
+    driver: bridge
