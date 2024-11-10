@@ -18,7 +18,8 @@ class NoteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         # Логируем запрос списка заметок
         logger.debug(
-            "Пользователь с id %s запросил список своих заметок", self.request.user.id
+            "Пользователь с id %s запросил список своих заметок",
+            self.request.user.id,
         )
         # Ограничиваем список заметок только для текущего пользователя
         return Note.objects.filter(user=self.request.user)
