@@ -1,0 +1,44 @@
+version: 1
+disable_existing_loggers: False
+
+formatters:
+  verbose:
+    format: "%(levelname)s %(asctime)s %(module)s %(message)s"
+
+  simple:
+    format: "%(levelname)s %(message)s"
+
+handlers:
+  console:
+    level: DEBUG
+    class: logging.StreamHandler
+    formatter: simple
+
+  file:
+    level: DEBUG
+    class: logging.handlers.TimedRotatingFileHandler
+    filename: logs/project.log
+    when: midnight
+    interval: 1
+    backupCount: 7
+    formatter: verbose
+
+  sentry:
+    level: ERROR  # Отправлять только ошибки уровня ERROR и выше
+    class: sentry_sdk.integrations.logging.EventHandler
+
+loggers:
+  django:
+    handlers: ["console", "file"]
+    level: DEBUG
+    propagate: True
+
+  notes:
+    handlers: ["sentry", "file", "console"]
+    level: DEBUG  # Меняем на WARNING или ERROR в продакшене
+    propagate: False
+
+  users:
+    handlers: ["sentry", "file", "console"]
+    level: DEBUG  #  Меняем на WARNING или ERROR в продакшене
+    propagate: False

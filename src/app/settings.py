@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import yaml
+import logging.config
 import sentry_sdk
 
 
@@ -21,6 +23,26 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+# ======= Логирование =======
+
+# Путь к файлу logging.yaml
+LOGGING_CONFIG_FILE = os.path.join(BASE_DIR, "logging.yaml")
+
+# Загрузка конфигурации логирования
+with open(LOGGING_CONFIG_FILE, "r") as file:
+    config = yaml.safe_load(file)
+    logging.config.dictConfig(config)
+
+
+# ======= Sentry =======
+
+sentry_sdk.init(
+    dsn="https://1beec533c88017aa9479b90fc2a832c3@o4508270793654272.ingest.de.sentry.io/4508270798372944",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -160,81 +182,3 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-
-# ======= Логирование =======
-
-
-LOG_DIR = BASE_DIR / "logs"
-LOG_DIR.mkdir(exist_ok=True)
-
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    # formatters - задаёт формат вывода сообщений.
-    "formatters": {
-        # verbose - выводит полный формат с датой, уровнем и модулем
-        "verbose": {
-            "format": "{levelname} {asctime} {module} {message}",
-            "style": "{",
-        },
-        # simple — укороченная верся
-        "simple": {
-            "format": "{levelname} {message}",
-            "style": "{",
-        },
-    },
-    # handlers - определяет, куда отправляются логи.
-    "handlers": {
-        "sentry": {
-            "level": "ERROR",  # Отправлять только ошибки уровня ERROR и выше
-            "class": "sentry_sdk.integrations.logging.EventHandler",
-        },
-        "file": {
-            "level": "DEBUG",
-            "class": "logging.handlers.TimedRotatingFileHandler",
-            "filename": os.path.join(LOG_DIR, "project.log"),
-            "when": "midnight",  # Перезапись каждый день в полночь
-            "interval": 1,  # Интервал - 1 день
-            "backupCount": 7,  # Хранить логи за последние 7 дней
-            "formatter": "verbose",
-        },
-        "console": {
-            "level": "INFO",
-            "class": "logging.StreamHandler",
-            "formatter": "simple",
-        },
-    },
-    # loggers — это логгеры для модулей
-    "loggers": {
-        "django": {
-            "handlers": ["file", "console"],
-            "level": "DEBUG",  # Уровень логирования
-            "propagate": True,
-        },
-        "notes": {
-            "handlers": ["sentry", "file", "console"],
-            "level": "DEBUG",  # Меняем на WARNING или ERROR в продакшене
-            "propagate": False,
-        },
-        "users": {
-            "handlers": ["sentry", "file", "console"],
-            "level": "DEBUG",  # Меняем на WARNING или ERROR в продакшене
-            "propagate": False,
-        },
-    },
-}
-
-
-sentry_sdk.init(
-    dsn="https://1beec533c88017aa9479b90fc2a832c3@o4508270793654272.ingest.de.sentry.io/4508270798372944",
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for tracing.
-    traces_sample_rate=1.0,
-    _experiments={
-        # Set continuous_profiling_auto_start to True
-        # to automatically start the profiler on when
-        # possible.
-        "continuous_profiling_auto_start": True,
-    },
-)
