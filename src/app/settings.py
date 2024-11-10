@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import sentry_sdk
+
 
 load_dotenv()
 
@@ -73,6 +75,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # Sentry для захвата информации о пользователях
+    # "sentry_sdk.integrations.django.middleware.SentryMiddleware",
 ]
 
 ROOT_URLCONF = "app.urls"
@@ -167,29 +171,41 @@ LOG_DIR.mkdir(exist_ok=True)
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    # formatters - задаёт формат вывода сообщений.
     "formatters": {
+        # verbose - выводит полный формат с датой, уровнем и модулем
         "verbose": {
             "format": "{levelname} {asctime} {module} {message}",
             "style": "{",
         },
+        # simple — укороченная верся
         "simple": {
             "format": "{levelname} {message}",
             "style": "{",
         },
     },
+    # handlers - определяет, куда отправляются логи.
     "handlers": {
+        "sentry": {
+            "level": "ERROR",  # Отправлять только ошибки уровня ERROR и выше
+            "class": "sentry_sdk.integrations.logging.EventHandler",
+        },
         "file": {
             "level": "DEBUG",
-            "class": "logging.FileHandler",
+            "class": "logging.handlers.TimedRotatingFileHandler",
             "filename": os.path.join(LOG_DIR, "project.log"),
+            "when": "midnight",  # Перезапись каждый день в полночь
+            "interval": 1,  # Интервал - 1 день
+            "backupCount": 7,  # Хранить логи за последние 7 дней
             "formatter": "verbose",
         },
         "console": {
-            "level": "DEBUG",
+            "level": "INFO",
             "class": "logging.StreamHandler",
             "formatter": "simple",
         },
     },
+    # loggers — это логгеры для модулей
     "loggers": {
         "django": {
             "handlers": ["file", "console"],
@@ -198,13 +214,27 @@ LOGGING = {
         },
         "notes": {
             "handlers": ["file", "console"],
-            "level": "DEBUG",
+            "level": "DEBUG",  # Меняем на WARNING или ERROR в продакшене
             "propagate": False,
         },
         "users": {
-            "handlers": ["file", "console"],
-            "level": "DEBUG",
+            "handlers": ["sentry", "file", "console"],
+            "level": "DEBUG",  # Меняем на WARNING или ERROR в продакшене
             "propagate": False,
         },
     },
 }
+
+
+sentry_sdk.init(
+    dsn="https://1beec533c88017aa9479b90fc2a832c3@o4508270793654272.ingest.de.sentry.io/4508270798372944",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
+    _experiments={
+        # Set continuous_profiling_auto_start to True
+        # to automatically start the profiler on when
+        # possible.
+        "continuous_profiling_auto_start": True,
+    },
+)

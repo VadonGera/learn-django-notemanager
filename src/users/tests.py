@@ -95,8 +95,7 @@ def test_user_can_update_own_profile(api_client):
 
 @pytest.mark.django_db
 def test_user_cannot_update_other_user_profile(api_client):
-    """Тест API. Запрет на редактирование чужого профиля для обычных пользователей
-    Чужой профиль для обычных пользователей не доступен - NOT_FOUND"""
+    """Тест API. Запрет на редактирование чужого профиля для обычных пользователей"""
     user1 = User.objects.create_user(username="user1", password="pass1")
     user2 = User.objects.create_user(username="user2", password="pass2")
     api_client.force_authenticate(user=user1)
@@ -104,8 +103,8 @@ def test_user_cannot_update_other_user_profile(api_client):
     url = reverse("user-detail", args=[user2.id])
     data = {"phone": "987654321"}
     response = api_client.put(url, data)
-    # assert response.status_code == status.HTTP_403_FORBIDDEN
-    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+    # assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 @pytest.mark.django_db
