@@ -23,9 +23,15 @@ class UserRegistrationView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
+        # Создаем копию данных для логирования
+        log_data = request.data.copy()
+        # Заменяем значение поля 'password' на 'secret_information'
+        if "password" in log_data:
+            log_data["password"] = "secret_information"
+
         # Логируем запрос на регистрацию
-        logger.debug(
-            "Получен запрос на регистрацию пользователя с данными: %s", request.data
+        logger.info(
+            "Получен запрос на регистрацию пользователя с данными: %s", log_data
         )
 
         serializer = self.get_serializer(data=request.data)
@@ -55,7 +61,7 @@ class UserListView(generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         # Логируем запрос на получение списка пользователей
-        logger.debug(
+        logger.info(
             "Получен запрос на список пользователей от пользователя: %s", request.user
         )
 
@@ -93,7 +99,7 @@ class UserUpdateView(generics.RetrieveUpdateAPIView):
         current_user = request.user
 
         # Логируем попытку редактирования
-        logger.debug(
+        logger.info(
             "Пользователь с id %s запросил редактирование пользователя с id %s",
             current_user.id,
             user_id,
