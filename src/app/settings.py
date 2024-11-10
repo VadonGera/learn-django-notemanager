@@ -213,7 +213,7 @@ LOGGING = {
             "propagate": True,
         },
         "notes": {
-            "handlers": ["file", "console"],
+            "handlers": ["sentry", "file", "console"],
             "level": "DEBUG",  # Меняем на WARNING или ERROR в продакшене
             "propagate": False,
         },
