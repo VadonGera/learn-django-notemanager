@@ -13,6 +13,7 @@ services:
     # Миграции, создаем Superuser и запускаем встроенный сервер Django
     command: >
       bash -c "
+      python manage.py collectstatic --noinput &&
       python manage.py makemigrations && 
       python manage.py migrate --noinput && 
       python manage.py shell < superuser.py &&
@@ -25,12 +26,27 @@ services:
       - .env
     environment:
       RUNNING_IN_DOCKER: "1"  # Устанавливаем флаг, что это окружение Docker
+    volumes:
+      - static_volume:/usr/src/app/staticfiles  # Добавляем volume для общей статики
     # Дожидаемся запуска контейнера db
     depends_on:
       db:
         # и проверки его состояния
         condition: service_healthy
     # Подключаем к сети my_backend
+    networks:
+      - horse
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf  # подключаем конфигурацию Nginx
+      # - ./src/app/staticfiles:/code/staticfiles  # подключаем статические файлы
+      - static_volume:/src/staticfiles  # Подключаем volume со статикой
+    ports:
+      - "127.0.0.1:80:80"
+    depends_on:
+      - api
     networks:
       - horse
 
@@ -70,8 +86,8 @@ services:
       - horse
 
 volumes:
-  # Объявляем том my_data для хранения данных PostgreSQL
-  my_data:
+  my_data:  # Объявляем том my_data для хранения данных PostgreSQL
+  static_volume:  # Определяем общий volume
 
 networks:
   horse:
