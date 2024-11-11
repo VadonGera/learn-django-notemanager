@@ -131,7 +131,12 @@ DATABASES = {
         "NAME": str(os.getenv("SQL_DATABASE")),
         "USER": str(os.getenv("SQL_USER")),
         "PASSWORD": str(os.getenv("SQL_PASSWORD")),
-        "HOST": str(os.getenv("SQL_HOST")),
+        "HOST": str(
+            os.getenv(
+                "SQL_HOST",
+                "127.0.0.1" if os.getenv("RUNNING_IN_DOCKER") is None else "db",
+            )
+        ),
         "PORT": str(os.getenv("SQL_PORT")),
     }
 }
@@ -176,7 +181,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

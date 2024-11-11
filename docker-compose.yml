@@ -23,6 +23,8 @@ services:
     # Файл содержащий переменные окружения для контейнера
     env_file:
       - .env
+    environment:
+      RUNNING_IN_DOCKER: "1"  # Устанавливаем флаг, что это окружение Docker
     # Дожидаемся запуска контейнера db
     depends_on:
       db:
