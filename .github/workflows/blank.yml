@@ -1,36 +1,10 @@
-# Это базовый рабочий процесс, который поможет вам приступить к выполнению действий
+name: Print workflow #Название workflow
+on: workflow_dispatch #Триггер, который будет вызывать workflow
 
-name: CI
+jobs: #Начало секции джобов
+  print_hello: #Название джоба
+    runs-on: ubuntu-latest #Среда выполнения джоба
 
-# Управляет временем запуска рабочего процесса
-on:
-  # Запускает рабочий процесс по событиям push или pull request, но только для "main" ветви
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
-  # Позволяет запустить этот рабочий процесс вручную на вкладке Actions
-  workflow_dispatch:
-
-# Рабочий процесс состоит из одного или нескольких заданий, которые могут выполняться последовательно или параллельно
-jobs:
-  # Этот рабочий процесс содержит одно задание под названием "build".
-  build:
-    # Тип устройства, на котором будет выполняться задание
-    runs-on: ubuntu-latest
-
-    # Шаги представляют собой последовательность задач, которые будут выполняться в рамках задания
-    steps:
-      # Проверьте свой репозиторий в разделе $GITHUB_WORKSPACE, чтобы ваша работа могла получить к нему доступ
-      - uses: actions/checkout@v4
-
-      # Выполняет одну команду с помощью командной консоли runners
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Запускает набор команд с помощью командной оболочки runners
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+    steps: #Начало секции шагов
+      - name: Print hello #Название шага
+        run: echo "Hello world!" #Команда, которая будет выполнена в терминале
