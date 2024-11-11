@@ -16,7 +16,7 @@ services:
       python manage.py makemigrations && 
       python manage.py migrate --noinput && 
       python manage.py shell < superuser.py &&
-      python manage.py runserver 0.0.0.0:8000"
+      gunicorn app.wsgi:application --bind 0.0.0.0:8000 --workers 3"
     # Пробрасываем 8000 порт контейнера на 8000 порт (127.0.0.1:8000)
     ports:
       - "127.0.0.1:8000:8000"
