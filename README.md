@@ -1,0 +1,1 @@
+Статика REST framework не работает при DEBUG=False.
