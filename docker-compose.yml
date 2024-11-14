@@ -21,14 +21,14 @@ services:
       gunicorn app.wsgi:application --bind 0.0.0.0:8000 --workers 3"
     # Пробрасываем 8000 порт контейнера на 8000 порт (127.0.0.1:8000)
     ports:
-      - "127.0.0.1:8000:8000"
+      - "8000:8000"
     # Файл содержащий переменные окружения для контейнера
     env_file:
       - .env
     environment:
       RUNNING_IN_DOCKER: "1"  # Устанавливаем флаг, что это окружение Docker
     volumes:
-      - static_volume:/my_application/static  # Добавляем volume для общей статики
+      - static_volume:/my_application/staticfiles  # Добавляем volume для общей статики
     # Дожидаемся запуска контейнера db
     depends_on:
       db:
@@ -44,7 +44,7 @@ services:
       context: ./nginx  # путь к директории с Dockerfile
       dockerfile: Dockerfile  # имя Dockerfile (по умолчанию, но можно указать явно)
     volumes:
-      - static_volume:/my_application/static  # Подключаем volume со статикой
+      - static_volume:/my_application/staticfiles  # Подключаем volume со статикой
     ports:
       - "80:80"
     depends_on:
