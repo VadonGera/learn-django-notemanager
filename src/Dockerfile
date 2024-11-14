@@ -30,3 +30,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копируем все файлы директории src в контейнер следующим слоем
 COPY . .
 # Теперь структура выглядит так: '/my_application/*.*'
+
+# COPY entrypoint.sh /my_application/entrypoint.sh
+RUN chmod +x entrypoint.sh
+ENTRYPOINT ["./entrypoint.sh"]

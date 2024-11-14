@@ -11,14 +11,9 @@ services:
       dockerfile: Dockerfile  # имя Dockerfile (по умолчанию, но можно указать явно)
     # Автоматически перезапускает контейнер, если он выходит из строя
     restart: always
+    # command: убрали в entrypoint.sh, там:
     # Миграции, создаем Superuser и запускаем встроенный сервер Django
-    command: >
-      bash -c "
-      python manage.py collectstatic --noinput &&
-      python manage.py makemigrations && 
-      python manage.py migrate --noinput && 
-      python manage.py shell < superuser.py &&
-      gunicorn app.wsgi:application --bind 0.0.0.0:8000 --workers 3"
+
     # Пробрасываем 8000 порт контейнера на 8000 порт (127.0.0.1:8000)
     ports:
       - "8000:8000"
@@ -39,10 +34,10 @@ services:
       - horse
 
   nginx:
-#    image: nginx:latest
     build:
       context: ./nginx  # путь к директории с Dockerfile
       dockerfile: Dockerfile  # имя Dockerfile (по умолчанию, но можно указать явно)
+    restart: always
     volumes:
       - static_volume:/my_application/staticfiles  # Подключаем volume со статикой
     ports:
@@ -53,7 +48,6 @@ services:
       - horse
 
   db:
-    # Берём образ БД PostgreSQL версии latest
     image: postgres:latest
     # Автоматически перезапускает контейнер, если он выходит из строя
     restart: always
@@ -72,6 +66,7 @@ services:
     healthcheck:
       # Запускаем внутри контейнера проверку его состояния
       test: pg_isready -h db -U ${SQL_USER} -d ${SQL_DATABASE}
+#      test: ["CMD-SHELL", "pg_isready -h db -U $POSTGRES_USER -d $POSTGRES_DB"]
       # Интервал между проверками
       interval: 3s
       # Время на завершение проверки
@@ -81,15 +76,15 @@ services:
       # Ожидание перед началом проверок
       start_period: 3s
     # Порт, если нужно подключаться к базе данных с хоста (опционально)
-#    ports:
-#      - "5432:5432"
+    #  ports:
+    #  - "5432:5432"
     # Подключаем к сети horse
     networks:
       - horse
 
 volumes:
   my_data:  # Объявляем том my_data для хранения данных PostgreSQL
-  static_volume:  # Определяем общий volume
+  static_volume:  # Определяем общий volume статики
 
 networks:
   horse:
