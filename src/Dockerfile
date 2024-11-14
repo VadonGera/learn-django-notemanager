@@ -1,21 +1,32 @@
 # Используем официальный образ Python в качестве базового
-FROM python:3.12-slim
+FROM python:3.12-alpine
 
 # Мета данные
 LABEL authors="horse"
 
-# Устанавливаем рабочую директорию внутри контейнера
-WORKDIR /usr/src/app
+# Обновляем apk и устанавливаем необходимые зависимости
+# При использовании python:3.12-slim работаем с apt-get
+# В python:3.12-alpine нет bash
+RUN apk update && apk add --no-cache \
+    postgresql-dev \
+    gcc \
+    musl-dev \
+    libffi-dev \
+    bash
 
 # Предотвращаем создание .pyc файлов, экономим пространство
 ENV PYTHONDONTWRITEBYTECODE=1
 # Отключает буферизацию стандартного вывода
 ENV PYTHONUNBUFFERED=1
 
-RUN pip install --upgrade pip
-COPY ./requirements.txt /usr/src/app
-RUN pip install -r requirements.txt
+# Устанавливаем рабочую директорию
+WORKDIR /my_application
 
-# Копируем все файлы директории src в контейнер
-COPY . ./
-# Теперь структура выглядит так: '/usr/src/app/*.*'
+RUN pip install --upgrade pip
+# Копируем requirements.txt и устанавливаем Python зависимости отдельным слоем
+COPY ./requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Копируем все файлы директории src в контейнер следующим слоем
+COPY . .
+# Теперь структура выглядит так: '/my_application/*.*'

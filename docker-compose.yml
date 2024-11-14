@@ -1,13 +1,14 @@
 # Задаём имя проекта
 name: user-notes
 # Указывает версию формата файла (вроде как устарело уже)
-# version: '3.8'
+# version: '3.9'
 
 # Определяет службы, которые будут запущены в контейнерах
 services:
   api:
-    # Указываем директорию ./src, в которой содержится Dockerfile для сборки образа
-    build: ./src
+    build:
+      context: ./src  # путь к директории с Dockerfile для сборки образа
+      dockerfile: Dockerfile  # имя Dockerfile (по умолчанию, но можно указать явно)
     # Автоматически перезапускает контейнер, если он выходит из строя
     restart: always
     # Миграции, создаем Superuser и запускаем встроенный сервер Django
@@ -27,7 +28,7 @@ services:
     environment:
       RUNNING_IN_DOCKER: "1"  # Устанавливаем флаг, что это окружение Docker
     volumes:
-      - static_volume:/usr/src/app/staticfiles  # Добавляем volume для общей статики
+      - static_volume:/my_application/static  # Добавляем volume для общей статики
     # Дожидаемся запуска контейнера db
     depends_on:
       db:
@@ -38,13 +39,14 @@ services:
       - horse
 
   nginx:
-    image: nginx:latest
+#    image: nginx:latest
+    build:
+      context: ./nginx  # путь к директории с Dockerfile
+      dockerfile: Dockerfile  # имя Dockerfile (по умолчанию, но можно указать явно)
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf  # подключаем конфигурацию Nginx
-      # - ./src/app/staticfiles:/code/staticfiles  # подключаем статические файлы
-      - static_volume:/src/staticfiles  # Подключаем volume со статикой
+      - static_volume:/my_application/static  # Подключаем volume со статикой
     ports:
-      - "127.0.0.1:80:80"
+      - "80:80"
     depends_on:
       - api
     networks:
