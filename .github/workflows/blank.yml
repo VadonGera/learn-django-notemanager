@@ -51,18 +51,30 @@ jobs:
 
     # 5. Устанавливаем переменную окружения для базы данных
     - name: Set database environment variable
-      run:
+      run: |
         echo "ALLOWED_HOSTS=localhost,127.0.0.1" >> $GITHUB_ENV
-        echo "DATABASE_URL=postgres://test_user:test_password@localhost:5432/test_db" >> $GITHUB_ENV
+        echo "SQL_DATABASE=test_db" >> $GITHUB_ENV
+        echo "SQL_USER=test_user" >> $GITHUB_ENV
+        echo "SQL_PASSWORD=test_password" >> $GITHUB_ENV
+        # echo "SQL_HOST=localhost" >> $GITHUB_ENV  # Используйте 'localhost', если база данных работает в контейнере на том же хосте
+        echo "SQL_PORT=5432" >> $GITHUB_ENV
+        # echo "RUNNING_IN_DOCKER=true" >> $GITHUB_ENV  # Можно указать true, если база данных запускается в Docker
+        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
+        echo "DEBUG=True" >> $GITHUB_ENV  # Для тестового окружения
 
     # 6. Запускаем тесты
     - name: Run tests
       env:
-        DATABASE_URL: ${{ env.DATABASE_URL }}  # Используем переменную с URL базы данных
+        SQL_DATABASE: ${{ env.SQL_DATABASE }}
+        SQL_USER: ${{ env.SQL_USER }}
+        SQL_PASSWORD: ${{ env.SQL_PASSWORD }}
+        # SQL_HOST: ${{ env.SQL_HOST }}
+        SQL_PORT: ${{ env.SQL_PORT }}
+        # RUNNING_IN_DOCKER: ${{ env.RUNNING_IN_DOCKER }}
         ALLOWED_HOSTS: ${{ env.ALLOWED_HOSTS }}
+        SECRET_KEY: ${{ env.SECRET_KEY }}
+        DEBUG: ${{ env.DEBUG }}
       run: |
         cd src
         pytest --cov=notes --cov=users
-        # python manage.py test  # Запускаем тесты через Django
-        # Если используете pytest, замените на:
-        # pytest
+
