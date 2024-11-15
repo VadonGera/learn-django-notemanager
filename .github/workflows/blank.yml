@@ -62,7 +62,7 @@ jobs:
         ALLOWED_HOSTS: ${{ env.ALLOWED_HOSTS }}
       run: |
         cd src
-        pytest --cov=notes --cov=users --cov-report=term-missing
+        pytest --cov=notes --cov=users
         # python manage.py test  # Запускаем тесты через Django
         # Если используете pytest, замените на:
         # pytest
