@@ -51,12 +51,15 @@ jobs:
 
     # 5. Устанавливаем переменную окружения для базы данных
     - name: Set database environment variable
-      run: echo "DATABASE_URL=postgres://test_user:test_password@localhost:5432/test_db" >> $GITHUB_ENV
+      run:
+        echo "ALLOWED_HOSTS=localhost" >> $GITHUB_ENV
+        echo "DATABASE_URL=postgres://test_user:test_password@localhost:5432/test_db" >> $GITHUB_ENV
 
     # 6. Запускаем тесты
     - name: Run tests
       env:
         DATABASE_URL: ${{ env.DATABASE_URL }}  # Используем переменную с URL базы данных
+        ALLOWED_HOSTS: ${{ env.ALLOWED_HOSTS }}
       run: |
         cd src
         pytest --cov=notes --cov=users --cov-report=term-missing
