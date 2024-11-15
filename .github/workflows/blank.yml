@@ -12,19 +12,19 @@ jobs:
     runs-on: ubuntu-latest  # Используем виртуальную машину с Ubuntu
 
     services:
-      postgres:  # Настраиваем PostgreSQL как сервис для тестов
-        image: postgres:latest  # Используем образ PostgreSQL
-        env:  # Переменные окружения для настройки базы данных
+      postgres:
+        image: postgres:latest
+        env:
           POSTGRES_USER: test_user
           POSTGRES_PASSWORD: test_password
           POSTGRES_DB: test_db
         ports:
-          - 5432:5432  # Открываем порт для подключения (локально в контейнере)
-        options: >-  # Дополнительные опции для PostgreSQL
-          --health-cmd "pg_isready -U test_user"  # Проверка готовности базы данных
-          --health-interval 10s  # Интервал проверки
-          --health-timeout 5s  # Таймаут проверки
-          --health-retries 5  # Количество попыток
+          - 5432:5432
+        options: >-  
+          --health-cmd "pg_isready -U test_user"  
+          --health-interval 10s  
+          --health-timeout 5s  
+          --health-retries 5  
 
     steps:
     # 1. Клонируем репозиторий с кодом
