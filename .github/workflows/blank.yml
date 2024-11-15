@@ -58,6 +58,7 @@ jobs:
       env:
         DATABASE_URL: ${{ env.DATABASE_URL }}  # Используем переменную с URL базы данных
       run: |
+        cd src
         pytest --cov=notes --cov=users --cov-report=term-missing
         # python manage.py test  # Запускаем тесты через Django
         # Если используете pytest, замените на:
