@@ -52,7 +52,7 @@ jobs:
     # 5. Устанавливаем переменную окружения для базы данных
     - name: Set database environment variable
       run:
-        echo "ALLOWED_HOSTS=localhost" >> $GITHUB_ENV
+        echo "ALLOWED_HOSTS=localhost,127.0.0.1" >> $GITHUB_ENV
         echo "DATABASE_URL=postgres://test_user:test_password@localhost:5432/test_db" >> $GITHUB_ENV
 
     # 6. Запускаем тесты
