@@ -1,22 +1,64 @@
-name: Print workflow #Название workflow
-on: workflow_dispatch #Триггер, который будет вызывать workflow
+name: Run Tests
 
-jobs: #Начало секции джобов
+# Триггеры для запуска workflow
+on:
+  push:
+    branches:
+      - main  # Запуск при пуше в ветку main
+  workflow_dispatch:  # Ручной запуск через интерфейс GitHub Actions
 
-  print_hello: #Начало секции первой джобы
-    runs-on: ubuntu-latest #Среда выполнения джоба
-    steps: #Начало секции шагов
-      - name: Print hello #Название шага
-        run: echo "Hello world!" #Команда, которая будет выполнена в терминале
+jobs:
+  test:
+    runs-on: ubuntu-latest  # Используем виртуальную машину с Ubuntu
 
-  print_full_technical_info: #Начало секции второй джобы
-    runs-on: ubuntu-latest #Среда выполнения джоба
-    steps: #Начало секции шагов
-      - name: Print full_tech_info #Название шага
-        run: sudo lshw #Команда, которая будет выполнена в терминале
+    services:
+      postgres:  # Настраиваем PostgreSQL как сервис для тестов
+        image: postgres:latest  # Используем образ PostgreSQL
+        env:  # Переменные окружения для настройки базы данных
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432  # Открываем порт для подключения (локально в контейнере)
+        options: >-  # Дополнительные опции для PostgreSQL
+          --health-cmd "pg_isready -U test_user"  # Проверка готовности базы данных
+          --health-interval 10s  # Интервал проверки
+          --health-timeout 5s  # Таймаут проверки
+          --health-retries 5  # Количество попыток
 
-  print_short_technical_info: #Начало секции третий джобы
-    runs-on: ubuntu-latest #Среда выполнения джоба
-    steps: #Начало секции шагов
-      - name: Print short_tech_info #Название шага
-        run: sudo lshw -short #Команда, которая будет выполнена в терминале
+    steps:
+    # 1. Клонируем репозиторий с кодом
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # 2. Устанавливаем Python 3.12
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.12  # Указываем необходимую версию Python
+
+    # 3. Устанавливаем зависимости проекта
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip  # Обновляем pip
+        pip install -r requirements.txt  # Устанавливаем зависимости из requirements.txt
+
+    # 4. Устанавливаем дополнительные зависимости для тестов (если есть)
+    - name: Install test dependencies
+      run: |
+        pip install pytest pytest-django  # Установка pytest, если используется
+        # Добавьте другие пакеты, если нужно
+
+    # 5. Устанавливаем переменную окружения для базы данных
+    - name: Set database environment variable
+      run: echo "DATABASE_URL=postgres://test_user:test_password@localhost:5432/test_db" >> $GITHUB_ENV
+
+    # 6. Запускаем тесты
+    - name: Run tests
+      env:
+        DATABASE_URL: ${{ env.DATABASE_URL }}  # Используем переменную с URL базы данных
+      run: |
+        pytest --cov=notes --cov=users --cov-report=term-missing
+        # python manage.py test  # Запускаем тесты через Django
+        # Если используете pytest, замените на:
+        # pytest
