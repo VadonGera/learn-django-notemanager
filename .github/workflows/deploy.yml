@@ -1,0 +1,49 @@
+name: Deploy Application
+
+on:
+  workflow_dispatch: # Ручной запуск через интерфейс GitHub Actions
+
+jobs:
+  tests:
+    name: Run Tests
+    uses: ./.github/workflows/tests.yml # Включение тестового workflow
+
+  deploy:
+    name: Deploy to Server
+    needs: tests # Выполняется только после успешного прохождения тестов
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set up SSH Agent
+      uses: webfactory/ssh-agent@v0.8.1
+      with:
+        ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+
+    - name: Deploy Application via SSH
+      env:
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+      run: |
+        echo "Starting deployment to $SERVER_IP"
+
+        # Подключение к серверу и выполнение деплоя
+        ssh $SERVER_USER@$SERVER_IP << EOF
+          set -e # Остановить выполнение при ошибке
+          
+          echo "Pulling latest changes..."
+          cd ~/user-notes # Убедитесь, что проект лежит здесь
+          git pull origin main # Обновление репозитория
+
+          echo "Rebuilding Docker containers..."
+          docker-compose down
+          docker-compose pull # Обновить образы, если они обновились
+          docker-compose up -d --build # Запустить и пересобрать образы
+
+          echo "Removing unused Docker resources..."
+          docker system prune -f
+
+          echo "Deployment completed successfully!"
+        EOF
