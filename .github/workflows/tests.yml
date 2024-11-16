@@ -2,9 +2,14 @@ name: Run Tests
 
 # Триггеры для запуска workflow
 on:
+  # Запускает рабочий процесс по событиям push или pull request, но только для "main" ветви
   push:
     branches:
-      - main  # Запуск при пуше в ветку main
+      - main
+  pull_request:
+    branches:
+      - main
+
   workflow_dispatch:  # Ручной запуск через интерфейс GitHub Actions
 
 jobs:
@@ -76,5 +81,5 @@ jobs:
         DEBUG: ${{ env.DEBUG }}
       run: |
         cd src
-        pytest --cov=notes --cov=users
+        pytest --cov=notes --cov=users --cov-report=term-missing
 
