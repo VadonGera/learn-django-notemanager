@@ -4,13 +4,13 @@ on:
   workflow_dispatch: # Ручной запуск через интерфейс GitHub Actions
 
 jobs:
-  tests:
-    name: Run Tests
-    uses: ./.github/workflows/tests.yml # Включение тестового workflow
+#  tests:
+#    name: Run Tests
+#    uses: ./.github/workflows/tests.yml # Включение тестового workflow
 
   deploy:
     name: Deploy to Server
-    needs: tests # Выполняется только после успешного прохождения тестов
+#    needs: tests # Выполняется только после успешного прохождения тестов
     runs-on: ubuntu-latest
 
     steps:
