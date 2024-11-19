@@ -35,7 +35,7 @@ services:
 
   nginx:
     build:
-      context: ./nginx  # путь к директории с Dockerfile
+      context: src/nginx  # путь к директории с Dockerfile
       dockerfile: Dockerfile  # имя Dockerfile (по умолчанию, но можно указать явно)
     restart: always
     volumes:
