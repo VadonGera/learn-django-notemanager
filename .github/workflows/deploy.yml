@@ -1,4 +1,4 @@
-name: Deploy Application
+name: Deploy to Server
 
 on:
   workflow_dispatch: # Ручной запуск через интерфейс GitHub Actions
@@ -9,18 +9,39 @@ jobs:
 #    uses: ./.github/workflows/tests.yml # Включение тестового workflow
 
   deploy:
-    name: Deploy to Server
+    name: Deploy Application
 #    needs: tests # Выполняется только после успешного прохождения тестов
     runs-on: ubuntu-latest
 
     steps:
+    # Шаг 1: Клонируем репозиторий
     - name: Checkout Repository
       uses: actions/checkout@v3
 
+    # Шаг 2: Настраиваем SSH для соединения с сервером
     - name: Set up SSH Agent
       uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+
+
+    # Шаг 3: Копируем файлы на сервер (кроме .github)
+    - name: Copy files to server
+      run: |
+        rsync -avz --exclude='.github' \
+        -e "ssh -o StrictHostKeyChecking=no" \
+        ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:~/app
+
+
+
+
+
+
+
+
+
+
+
 
     - name: Deploy Application via SSH
       env:
