@@ -13,6 +13,7 @@ RUN apk update && apk add --no-cache \
     musl-dev \
     libffi-dev \
     bash
+RUN apk add dos2unix
 
 # Предотвращаем создание .pyc файлов, экономим пространство
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -31,6 +32,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 # Теперь структура выглядит так: '/my_application/*.*'
 
+# Конвертируем файл entrypoint.sh в Unix-формат строк (LF). Иначе ругается на рабочем компе.
+RUN dos2unix entrypoint.sh
 # COPY entrypoint.sh /my_application/entrypoint.sh
 RUN chmod +x entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
