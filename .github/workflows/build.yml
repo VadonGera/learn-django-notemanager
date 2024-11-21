@@ -19,15 +19,18 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # проверит наличие файлов в контексте сборки (.).
-    - name: ebug Build Context
+      # Проверит наличие файлов в контексте сборки (.).
+    - name: Debug Build Context
       run: ls -la .
 
       # Выведите значения переменных окружения
     - name: Print Secrets
-      run: echo "SECRET_KEY=${{ secrets.SECRET_KEY }}"
+      run: |
+        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}"
+        echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}"
       env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
 
 #    # Сборка и публикация Docker-образа
 #    - name: Build and push Docker image
