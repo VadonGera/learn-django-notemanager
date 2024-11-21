@@ -1,9 +1,10 @@
 name: Copy to Server
 
 on:
-  push:
-    branches:
-      - main  # Запускается при пуше в ветку main
+  workflow_dispatch: # Ручной запуск через интерфейс GitHub Actions
+#  push:
+#    branches:
+#      - main  # Запускается при пуше в ветку main
 
 jobs:
   deploy:
