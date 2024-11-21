@@ -58,6 +58,7 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
 CSRF_TRUSTED_ORIGINS = [
     "http://5.35.124.148:8088",
     "http://localhost:8088",
+    "http://django-notes.delcom.space:8088",
 ]
 
 # Application definition
