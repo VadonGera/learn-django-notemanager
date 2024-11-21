@@ -24,6 +24,11 @@ jobs:
       run: |
         rsync -avz --delete \
           --exclude='.git' \
+          --exclude='.env' \
+          --exclude='.env.example' \
+          --exclude='.gitignore' \
+          --exclude='docker-compose.db.yml' \
+          --exclude='.github/' \
           ./ \
           ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/${{ secrets.SERVER_USER }}/user-notes/
 
