@@ -32,19 +32,19 @@ jobs:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
         ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
 
-#    # Сборка и публикация Docker-образа
-#    - name: Build and push Docker image
-#      run: |
-#        docker build \
-#          --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }} \
-#          --build-arg ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} \
-#          --build-arg SQL_DATABASE=${{ secrets.SQL_DATABASE }} \
-#          --build-arg SQL_USER=${{ secrets.SQL_USER }} \
-#          --build-arg SQL_PASSWORD=${{ secrets.SQL_PASSWORD }} \
-#          --build-arg SQL_PORT=${{ secrets.SQL_PORT }} \
-#          --build-arg DATABASE=${{ secrets.DATABASE }} \
-#          --build-arg DJANGO_SUPERUSER_USERNAME=${{ secrets.DJANGO_SUPERUSER_USERNAME }} \
-#          --build-arg DJANGO_SUPERUSER_EMAIL=${{ secrets.DJANGO_SUPERUSER_EMAIL }} \
-#          --build-arg DJANGO_SUPERUSER_PASSWORD=${{ secrets.DJANGO_SUPERUSER_PASSWORD }} \
-#          -t vadongera/user-notes:latest .
-#        docker push vadongera/user-notes:latest
+    # Сборка и публикация Docker-образа
+    - name: Build and push Docker image
+      run: |
+        docker build \
+          --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }} \
+          --build-arg ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} \
+          --build-arg SQL_DATABASE=${{ secrets.SQL_DATABASE }} \
+          --build-arg SQL_USER=${{ secrets.SQL_USER }} \
+          --build-arg SQL_PASSWORD=${{ secrets.SQL_PASSWORD }} \
+          --build-arg SQL_PORT=${{ secrets.SQL_PORT }} \
+          --build-arg DATABASE=${{ secrets.DATABASE }} \
+          --build-arg DJANGO_SUPERUSER_USERNAME=${{ secrets.DJANGO_SUPERUSER_USERNAME }} \
+          --build-arg DJANGO_SUPERUSER_EMAIL=${{ secrets.DJANGO_SUPERUSER_EMAIL }} \
+          --build-arg DJANGO_SUPERUSER_PASSWORD=${{ secrets.DJANGO_SUPERUSER_PASSWORD }} \
+          -t ${{ secrets.DOCKER_USERNAME }}/user-notes:latest .
+        docker push ${{ secrets.DOCKER_USERNAME }}/user-notes:latest
