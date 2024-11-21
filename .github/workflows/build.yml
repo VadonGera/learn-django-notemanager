@@ -28,23 +28,40 @@ jobs:
       run: |
         echo "SECRET_KEY=${{ secrets.SECRET_KEY }}"
         echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}"
+        echo "SQL_DATABASE=${{ secrets.SQL_DATABASE }}"
+        echo "SQL_USER=${{ secrets.SQL_USER }}"
+        echo "SQL_PASSWORD=${{ secrets.SQL_PASSWORD }}"
+        echo "SQL_PORT=${{ secrets.SQL_PORT }}"
+        echo "DATABASE=${{ secrets.DATABASE }}"
+        echo "DJANGO_SUPERUSER_USERNAME=${{ secrets.DJANGO_SUPERUSER_USERNAME }}"
+        echo "DJANGO_SUPERUSER_EMAIL=${{ secrets.DJANGO_SUPERUSER_EMAIL }}"
+        echo "DJANGO_SUPERUSER_PASSWORD=${{ secrets.DJANGO_SUPERUSER_PASSWORD }}"
       env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
         ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+        SQL_DATABASE: ${{ secrets.SQL_DATABASE }}
+        SQL_USER: ${{ secrets.SQL_USER }}
+        SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}
+        SQL_PORT: ${{ secrets.SQL_PORT }}
+        DATABASE: ${{ secrets.DATABASE }}
+        DJANGO_SUPERUSER_USERNAME: ${{ secrets.DJANGO_SUPERUSER_USERNAME }}
+        DJANGO_SUPERUSER_EMAIL: ${{ secrets.DJANGO_SUPERUSER_EMAIL }}
+        DJANGO_SUPERUSER_PASSWORD: ${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
+
 
     # Сборка и публикация Docker-образа
-    - name: Build and push Docker image
-      run: |
-        docker build \
-          --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }} \
-          --build-arg ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} \
-          --build-arg SQL_DATABASE=${{ secrets.SQL_DATABASE }} \
-          --build-arg SQL_USER=${{ secrets.SQL_USER }} \
-          --build-arg SQL_PASSWORD=${{ secrets.SQL_PASSWORD }} \
-          --build-arg SQL_PORT=${{ secrets.SQL_PORT }} \
-          --build-arg DATABASE=${{ secrets.DATABASE }} \
-          --build-arg DJANGO_SUPERUSER_USERNAME=${{ secrets.DJANGO_SUPERUSER_USERNAME }} \
-          --build-arg DJANGO_SUPERUSER_EMAIL=${{ secrets.DJANGO_SUPERUSER_EMAIL }} \
-          --build-arg DJANGO_SUPERUSER_PASSWORD=${{ secrets.DJANGO_SUPERUSER_PASSWORD }} \
-          -t ${{ secrets.DOCKER_USERNAME }}/user-notes:latest .
-        docker push ${{ secrets.DOCKER_USERNAME }}/user-notes:latest
+#    - name: Build and push Docker image
+#      run: |
+#        docker build \
+#          --build-arg SECRET_KEY=${{ secrets.SECRET_KEY }} \
+#          --build-arg ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} \
+#          --build-arg SQL_DATABASE=${{ secrets.SQL_DATABASE }} \
+#          --build-arg SQL_USER=${{ secrets.SQL_USER }} \
+#          --build-arg SQL_PASSWORD=${{ secrets.SQL_PASSWORD }} \
+#          --build-arg SQL_PORT=${{ secrets.SQL_PORT }} \
+#          --build-arg DATABASE=${{ secrets.DATABASE }} \
+#          --build-arg DJANGO_SUPERUSER_USERNAME=${{ secrets.DJANGO_SUPERUSER_USERNAME }} \
+#          --build-arg DJANGO_SUPERUSER_EMAIL=${{ secrets.DJANGO_SUPERUSER_EMAIL }} \
+#          --build-arg DJANGO_SUPERUSER_PASSWORD=${{ secrets.DJANGO_SUPERUSER_PASSWORD }} \
+#          -t ${{ secrets.DOCKER_USERNAME }}/user-notes:latest .
+#        docker push ${{ secrets.DOCKER_USERNAME }}/user-notes:latest
