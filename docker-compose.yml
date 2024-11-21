@@ -41,7 +41,7 @@ services:
     volumes:
       - static_volume:/my_application/staticfiles  # Подключаем volume со статикой
     ports:
-      - "8080:80"
+      - "8088:80"
     depends_on:
       - api
     networks:
