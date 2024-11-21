@@ -11,7 +11,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up SSH
       run: |
@@ -32,11 +32,10 @@ jobs:
           ./ \
           ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/${{ secrets.SERVER_USER }}/user-notes/
 
-#    - name: Post-deploy actions
-#      run: |
-#        ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-#          cd /home/${{ secrets.SERVER_USER }}/user-notes/
-#          docker-compose down
-#          docker-compose up -d --build
-#        EOF
-
+    - name: Post-deploy actions
+      run: |
+        ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          cd /home/${{ secrets.SERVER_USER }}/user-notes/
+          docker-compose down
+          docker-compose up -d --build
+        EOF
