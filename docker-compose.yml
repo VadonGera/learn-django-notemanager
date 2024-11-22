@@ -40,8 +40,10 @@ services:
     restart: always
     volumes:
       - static_volume:/my_application/staticfiles  # Подключаем volume со статикой
+      - /path/to/certs:/etc/nginx/certs  # Прокиньте сертификаты внутрь контейнера
     ports:
-      - "8088:80"
+#      - "8088:80"
+      - "443:443"
     depends_on:
       - api
     networks:

@@ -54,12 +54,15 @@ SECRET_KEY = str(os.getenv("SECRET_KEY", "default_secret_key"))
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS").split(",")
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://5.35.124.148:8088",
-    "http://localhost:8088",
-    "http://django-notes.delcom.space:8088",
-]
+SECURE_SSL_REDIRECT = True  # Перенаправление HTTP на HTTPS
+SECURE_PROXY_SSL_HEADER = (
+    "HTTP_X_FORWARDED_PROTO",
+    "https",
+)  # Чтобы Nginx передавал правильный заголовок
+SESSION_COOKIE_SECURE = True  # Secure cookies
+CSRF_COOKIE_SECURE = True  # Secure cookies
 
 # Application definition
 
