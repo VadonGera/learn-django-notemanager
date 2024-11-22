@@ -60,6 +60,7 @@ jobs:
     - name: Set database environment variable
       run: |
         echo "ALLOWED_HOSTS=localhost,127.0.0.1" >> $GITHUB_ENV
+        echo "CSRF_TRUSTED_ORIGINS=https://example.space,https://127.0.0.1" >> $GITHUB_ENV
         echo "SQL_DATABASE=test_db" >> $GITHUB_ENV
         echo "SQL_USER=test_user" >> $GITHUB_ENV
         echo "SQL_PASSWORD=test_password" >> $GITHUB_ENV
@@ -79,6 +80,7 @@ jobs:
         SQL_PORT: ${{ env.SQL_PORT }}
         # RUNNING_IN_DOCKER: ${{ env.RUNNING_IN_DOCKER }}
         ALLOWED_HOSTS: ${{ env.ALLOWED_HOSTS }}
+        CSRF_TRUSTED_ORIGINS: ${{ env.CSRF_TRUSTED_ORIGINS }}
         SECRET_KEY: ${{ env.SECRET_KEY }}
         DEBUG: ${{ env.DEBUG }}
       run: |
